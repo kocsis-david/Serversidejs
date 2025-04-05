@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Multi Agent Designer</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <div class="container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <h1>Multi Agent Designer</h1>
+      <button class="add-btn" onclick="window.location.href='/agent/new'">Add</button>
+    </div>
+    <!-- Tabs -->
+    <div class="tabs">
+      <a href="/?tab=all" class="<%= currentTab === 'all' ? 'active' : '' %>">All Agents</a>
+      <a href="/?tab=in-progress" class="<%= currentTab === 'in-progress' ? 'active' : '' %>">In Progress</a>
+      <a href="/?tab=in-production" class="<%= currentTab === 'in-production' ? 'active' : '' %>">In Production</a>
+    </div>
+    <!-- Agents Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Priority</th>
+          <th>Deadline</th>
+          <th>Progress</th>
+          <th>Dashboard</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% agents.forEach(([agentKey, data]) => { %>
+          <tr>
+            <td><%= data.name %></td>
+            <td><a class="pill" href="/agent/<%= agentKey %>">Open</a></td>
+            <td><%= data.type %></td>
+            <td><span class="priority-<%= data.priority.toLowerCase() %>"><%= data.priority %></span></td>
+            <td><%= data.deadline %></td>
+            <td><span class="progress-<%= data.progress.toLowerCase() %>"><%= data.progress %></span></td>
+            <td><a class="pill" href="/dashboard/<%= agentKey %>">Dashboard</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <!-- Pagination (if needed) -->
+    <% if (totalPages > 1) { %>
+      <div class="pagination">
+        <% if (currentPage > 1) { %>
+          <button onclick="window.location.href='/?page=<%= currentPage - 1 %>&tab=<%= currentTab %>'">&lt; Previous</button>
+        <% } %>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <% if (i === currentPage) { %>
+            <button class="current"><%= i %></button>
+          <% } else { %>
+            <button onclick="window.location.href='/?page=<%= i %>&tab=<%= currentTab %>'"><%= i %></button>
+          <% } %>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+          <button onclick="window.location.href='/?page=<%= currentPage + 1 %>&tab=<%= currentTab %>'">Next &gt;</button>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
