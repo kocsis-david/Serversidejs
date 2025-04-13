@@ -1,0 +1,46 @@
+/* ========= AGENT EDIT/ADD PAGE ========= */
+.back-link {
+  text-decoration: none;
+  color: #2F54EB;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+form {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 500;
+  color: #555;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+textarea {
+  height: 200px;
+  resize: vertical;
+}
+
+.form-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}

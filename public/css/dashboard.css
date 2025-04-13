@@ -1,0 +1,112 @@
+/* ========= DASHBOARD PAGE ========= */
+header {
+  background: #2F54EB;
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+}
+
+.toolbar button {
+  background: #fff;
+  color: #2F54EB;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  background: #ddd;
+}
+
+.container.dashboard {
+  display: flex;
+  height: calc(100vh - 50px);
+}
+
+.sidebar-left {
+  width: 240px;
+  background: #fff;
+  padding: 10px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.canvas-container {
+  flex: 1;
+  position: relative;
+  background: #eaeaea;
+  overflow: auto;
+}
+
+#canvas {
+  width: 2000px;
+  height: 2000px;
+  position: relative;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+/* Pipeline Component */
+.pipeline-component {
+  position: absolute;
+  padding: 8px 12px;
+  border: 1px solid #2F54EB;
+  background: #EAF1FE;
+  border-radius: 4px;
+  cursor: move;
+}
+
+.pipeline-component .comp-label {
+  font-weight: bold;
+}
+
+.pipeline-component .comp-description {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  color: #555;
+}
+
+.pipeline-component .comp-edit,
+.pipeline-component .comp-delete {
+  font-size: 0.8rem;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.pipeline-component .comp-edit {
+  color: blue;
+}
+
+.pipeline-component .comp-delete {
+  color: red;
+}
+
+/* Left Sidebar - Component List */
+.component-list button {
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 5px;
+  border: none;
+  background: #2F54EB;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.component-list button:hover {
+  background: #1d3bcc;
+}

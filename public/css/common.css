@@ -1,0 +1,121 @@
+/* ========= Common Elements & Utilities ========= */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.top-bar h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.add-btn {
+  background-color: #2F54EB;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.add-btn:hover {
+  background-color: #1d3bcc;
+}
+
+.btn {
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn.save {
+  background-color: #2F54EB;
+  color: #fff;
+}
+
+.btn.save:hover {
+  background-color: #1d3bcc;
+}
+
+.btn.cancel {
+  background-color: #ccc;
+  text-decoration: none;
+  display: inline-block;
+  line-height: 2.4rem;
+  text-align: center;
+  color: #333;
+}
+
+.btn.cancel:hover {
+  background-color: #b3b3b3;
+}
+
+.btn.delete {
+  background-color: #d32f2f;
+  color: #fff;
+}
+
+.btn.delete:hover {
+  background-color: #b71c1c;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #2F54EB;
+  color: #2F54EB;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  background-color: #EAF1FE;
+  text-decoration: none;
+}
+
+.pill:hover {
+  background-color: #dce5fd;
+}
+
+.priority-high {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+.priority-medium {
+  color: #ff9800;
+}
+
+.priority-low {
+  color: #388e3c;
+}
+
+.progress-testing {
+  color: #2F54EB;
+}
+
+.progress-planning {
+  color: #8e24aa;
+}
+
+.progress-integration {
+  color: #f9a825;
+}
+
+.progress-developing {
+  color: #e64a19;
+}
+
+.progress-production {
+  color: #388e3c;
+  font-weight: 500;
+}

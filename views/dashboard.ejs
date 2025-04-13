@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Agent Dashboard: <%= agentData.name %></title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Include jsPlumb from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
@@ -46,62 +48,72 @@
   <form method="POST" action="/dashboard/<%= agentKey %>/save" id="pipelineForm" style="display:none;">
     <input type="hidden" id="pipelineData" name="pipeline" value="">
   </form>
-  
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Initialize jsPlumb instance (stored in a variable "instance" for later use)
       var instance = jsPlumb.getInstance({
         Connector: "Straight",
-        Endpoint:"Dot",
+        Endpoint: "Dot",
         PaintStyle: { stroke: "#2F54EB", strokeWidth: 2 },
         EndpointStyle: { fill: "#2F54EB", radius: 4 },
         ConnectionOverlays: [
-          [ "Arrow", { location: 1, width:10, length:10 } ]
+          [ "Arrow", { location: 1, width: 10, length: 10 } ]
         ],
-        Container: "canvas"
+        Container: "canvas",
+        // Ensure connections are properly maintained
+        ConnectionsDetachable: false,
+        // Improve connection appearance
+        HoverPaintStyle: { stroke: "#1d3bcc", strokeWidth: 3 }
       });
-      
+
+      // Configure jsPlumb defaults
+      instance.importDefaults({
+        Anchors: ["Right", "Left"],
+        MaxConnections: -1
+      });
+
       var canvas = document.getElementById("canvas");
       var scale = 1;
-      
+
       function setZoom(zoom) {
         scale = zoom;
         canvas.style.transform = "scale(" + zoom + ")";
         canvas.style.transformOrigin = "0 0";
       }
-      
+
       document.getElementById("zoomIn").addEventListener("click", function() {
         setZoom(scale + 0.1);
       });
-      
+
       document.getElementById("zoomOut").addEventListener("click", function() {
         setZoom(Math.max(0.1, scale - 0.1));
       });
-      
+
       document.getElementById("resetView").addEventListener("click", function() {
         setZoom(1);
         canvas.scrollLeft = 0;
         canvas.scrollTop = 0;
       });
-      
+
       document.getElementById("clearCanvas").addEventListener("click", function() {
         var comps = canvas.getElementsByClassName("pipeline-component");
         while(comps.length > 0) {
           instance.remove(comps[0]);
         }
       });
-      
+
       document.getElementById("exportPipeline").addEventListener("click", function() {
         var pipelineData = getPipelineData();
         alert(JSON.stringify(pipelineData, null, 2));
       });
-      
+
       document.getElementById("savePipeline").addEventListener("click", function() {
         var pipelineData = getPipelineData();
         document.getElementById("pipelineData").value = JSON.stringify(pipelineData);
         document.getElementById("pipelineForm").submit();
       });
-      
+
       // Back link: save pipeline via AJAX then navigate back to "/"
       document.getElementById("backLink").addEventListener("click", function(e) {
         e.preventDefault();
@@ -131,7 +143,7 @@
           alert("Error saving pipeline.");
         });
       });
-      
+
       // Helper function to collect pipeline data from the canvas
       function getPipelineData() {
         var components = [];
@@ -149,12 +161,14 @@
         instance.getAllConnections().forEach(function(conn) {
           connections.push({
             source: conn.sourceId,
-            target: conn.targetId
+            target: conn.targetId,
+            sourceEndpoint: conn.endpoints[0].getUuid(),
+            targetEndpoint: conn.endpoints[1].getUuid()
           });
         });
         return { components: components, connections: connections };
       }
-      
+
       // Helper function to load pipeline data onto the canvas
       function loadPipelineData(data) {
         // Clear existing components
@@ -162,6 +176,11 @@
         while(comps.length > 0) {
           instance.remove(comps[0]);
         }
+
+        // Reset jsPlumb instance to clear any lingering connections
+        instance.reset();
+
+        // First create all components
         if(data && data.components) {
           data.components.forEach(function(compData) {
             addNewComponent(
@@ -173,26 +192,47 @@
             );
           });
         }
-        if(data && data.connections) {
-          data.connections.forEach(function(connData) {
-            instance.connect({ source: connData.source, target: connData.target });
-          });
-        }
+
+        // Wait a bit for the DOM to update and endpoints to be properly created
+        setTimeout(function() {
+          // Then create all connections
+          if(data && data.connections) {
+            data.connections.forEach(function(connData) {
+              // Determine source and target endpoints based on the connection data
+              var sourceId = connData.source;
+              var targetId = connData.target;
+
+              // Use stored endpoint UUIDs if available, otherwise use default right/left pattern
+              var sourceEndpoint = connData.sourceEndpoint || (sourceId + "-right");
+              var targetEndpoint = connData.targetEndpoint || (targetId + "-left");
+
+              // Create connection using the UUIDs of the endpoints
+              instance.connect({
+                uuids: [sourceEndpoint, targetEndpoint],
+                paintStyle: { stroke: "#2F54EB", strokeWidth: 2 },
+                endpointStyle: { fill: "#2F54EB", radius: 4 },
+                overlays: [
+                  [ "Arrow", { location: 1, width: 10, length: 10 } ]
+                ]
+              });
+            });
+          }
+        }, 100);
       }
-      
+
       var componentCounter = 0;
       // Function to add a new component to the canvas
       function addNewComponent(label, description, left, top, id) {
         componentCounter++;
         id = id || ("component_" + componentCounter);
         description = description || "No description";
-        
+
         var comp = document.createElement("div");
         comp.className = "pipeline-component";
         comp.id = id;
         comp.style.left = left || "50px";
         comp.style.top = top || (50 + 50 * componentCounter) + "px";
-        
+
         comp.innerHTML = `
           <span class="comp-label">${label}</span>
           <span class="comp-edit">[edit]</span>
@@ -200,12 +240,29 @@
           <br>
           <span class="comp-description">${description}</span>
         `;
-        
+
         canvas.appendChild(comp);
         instance.draggable(comp);
-        instance.addEndpoint(comp, { anchors: "Right" }, { isSource:true, isTarget:true, maxConnections: -1 });
-        instance.addEndpoint(comp, { anchors: "Left" }, { isSource:true, isTarget:true, maxConnections: -1 });
-        
+
+        // Add endpoints with consistent anchors and identifiers
+        instance.addEndpoint(comp, {
+          anchors: "Right",
+          uuid: comp.id + "-right"
+        }, {
+          isSource: true,
+          isTarget: true,
+          maxConnections: -1
+        });
+
+        instance.addEndpoint(comp, {
+          anchors: "Left",
+          uuid: comp.id + "-left"
+        }, {
+          isSource: true,
+          isTarget: true,
+          maxConnections: -1
+        });
+
         comp.querySelector(".comp-edit").addEventListener("click", function(e) {
           e.stopPropagation();
           var currentLabel = comp.querySelector(".comp-label").innerText;
@@ -219,15 +276,18 @@
             comp.querySelector(".comp-description").innerText = newDesc;
           }
         });
-        
+
         comp.querySelector(".comp-delete").addEventListener("click", function(e) {
           e.stopPropagation();
+          // Remove all connections to/from this component first
+          instance.deleteConnectionsForElement(comp.id);
+          // Then remove the component itself
           instance.remove(comp);
         });
-        
+
         return comp;
       }
-      
+
       // Attach event listeners to pre-made component buttons
       var compButtons = document.querySelectorAll(".component-list button");
       compButtons.forEach(function(btn) {
@@ -236,14 +296,14 @@
           addNewComponent(label);
         });
       });
-      
+
       document.getElementById("newComponent").addEventListener("click", function() {
         var label = prompt("Enter component label:");
         if (label) {
           addNewComponent(label);
         }
       });
-      
+
       // On page load, load saved pipeline data if available
       var savedPipeline = <%- JSON.stringify(agentData.pipeline || {}) %>;
       if (savedPipeline && savedPipeline.components && savedPipeline.components.length > 0) {

@@ -1,0 +1,89 @@
+/* ========= MAIN PAGE (Index) ========= */
+.tabs {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #E6E6E6;
+}
+
+.tabs a {
+  text-decoration: none;
+  color: #666;
+  padding-bottom: 0.5rem;
+  position: relative;
+  font-size: 1rem;
+}
+
+.tabs a:hover {
+  color: #2F54EB;
+}
+
+.tabs a.active {
+  color: #2F54EB;
+  font-weight: 500;
+}
+
+.tabs a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background-color: #2F54EB;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #fafafa;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 1px solid #E6E6E6;
+  font-size: 0.95rem;
+}
+
+th {
+  color: #666;
+  font-weight: 500;
+}
+
+td {
+  color: #333;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.pagination button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  color: #2F54EB;
+}
+
+.pagination .current {
+  background-color: #2F54EB;
+  color: #fff;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+}
